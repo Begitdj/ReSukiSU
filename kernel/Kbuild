@@ -5,13 +5,6 @@ kernelsu-objs += app_profile.o
 kernelsu-objs += apk_sign.o
 kernelsu-objs += sucompat.o
 
-ifeq ($(CONFIG_KSU_SUSFS), y)
-$(info -- $(REPO_NAME): SUSFS Inline Hook is temporary broken)
-$(info -- $(REPO_NAME): if you still want continue, comment out this notice in Kbuild file)
-$(info -- $(REPO_NAME): Process with your own risk!)
-$(error Temporary Stop SUSFS Build)
-endif
-
 kernelsu-objs += throne_tracker.o
 kernelsu-objs += pkg_observer.o
 kernelsu-objs += setuid_hook.o
@@ -48,6 +41,15 @@ REPO_OWNER := ReSukiSU
 REPO_NAME := ReSukiSU
 REPO_BRANCH := main
 KSU_VERSION_API := 4.1.0
+
+ifeq ($(CONFIG_KSU_SUSFS), y)
+$(info -- $(REPO_NAME): SUSFS Inline Hook is temporary broken)
+$(info -- $(REPO_NAME): if you still want continue, comment out this notice in Kbuild file)
+$(info -- $(REPO_NAME): this problem is because susfs's bug, please track it in susfs's gitlab)
+$(info -- $(REPO_NAME): https://gitlab.com/simonpunk/susfs4ksu/-/commits/gki-android14-6.1-dev?ref_type=heads)
+$(info -- $(REPO_NAME): Process with your own risk!)
+$(error Temporary Stop SUSFS Build)
+endif
 
 GIT_BIN := /usr/bin/env PATH="$$PATH":/usr/bin:/usr/local/bin git
 CURL_BIN := /usr/bin/env PATH="$$PATH":/usr/bin:/usr/local/bin curl
@@ -328,6 +330,22 @@ ifeq ($(CONFIG_KSU_MANUAL_HOOK), y)
     $(info -- $(REPO_NAME)/manual_hook: ksu_handle_stat found)
   else
     $(info -- You lost ksu_handle_stat hook in your kernel)
+    $(info -- Read: https://resukisu.github.io/guide/manual-hooks.html)
+    $(error You should integrate $(REPO_NAME) in your kernel.)
+  endif
+
+  ifeq ($(shell grep -q "ksu_handle_newfstat_ret" $(srctree)/fs/stat.c; echo $$?),0)
+    $(info -- $(REPO_NAME)/manual_hook: ksu_handle_newfstat_ret found)
+  else
+    $(info -- You lost ksu_handle_newfstat_ret hook in your kernel)
+    $(info -- Read: https://resukisu.github.io/guide/manual-hooks.html)
+    $(error You should integrate $(REPO_NAME) in your kernel.)
+  endif 
+
+  ifeq ($(shell grep -q "ksu_handle_fstat64_ret" $(srctree)/fs/stat.c; echo $$?),0)
+    $(info -- $(REPO_NAME)/manual_hook: ksu_handle_fstat64_ret found)
+  else
+    $(info -- You lost ksu_handle_fstat64_ret hook in your kernel)
     $(info -- Read: https://resukisu.github.io/guide/manual-hooks.html)
     $(error You should integrate $(REPO_NAME) in your kernel.)
   endif
