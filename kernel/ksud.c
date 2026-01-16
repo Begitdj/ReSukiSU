@@ -554,8 +554,13 @@ void ksu_handle_initrc(struct file *file)
         return;
     }
 
+// we no need this harden when using tracepoint hook
+// because in tracepoint hook, this method always call by kprobe
+// when we no need init rc hook, kprobe unregistered, and method never got call
+#ifndef KSU_TP_HOOK
     if (!ksu_init_rc_hook)
         return;
+#endif
 
     if (!is_init(get_current_cred()))
         return;

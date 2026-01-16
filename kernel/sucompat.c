@@ -83,11 +83,80 @@ static char __user *sh_user_path(void)
     return userspace_stack_buffer(sh_path, sizeof(sh_path));
 }
 
+static char __user *ksud_user_path(void)
+{
+    static const char ksud_path[] = KSUD_PATH;
+
+    return userspace_stack_buffer(ksud_path, sizeof(ksud_path));
+}
+
 static const char sh_path[] = SH_PATH;
 static const char su_path[] = SU_PATH;
 static const char ksud_path[] = KSUD_PATH;
 
 extern bool ksu_kernel_umount_enabled;
+
+#ifdef KSU_TP_HOOK
+
+// WARNING!!!! THIS SHOULDN'T BE CALLED BY UNTRUSTED CONTEXT
+// IT IS DESIGNED ONLY FOR TRACEPOINT HOOK, BECAUSE CHECKS ALREADY COMPLETE WHEN TP REGISTER
+// ESPECIALLY DON'T CALL THAT IN MANUAL HOOK
+int ksu_handle_execve_sucompat_tp_internal(const char __user **filename_user,
+                                           void *__never_use_argv,
+                                           void *__never_use_envp,
+                                           int *__never_use_flags)
+{
+    const char su[] = SU_PATH;
+    const char __user *fn;
+    char path[sizeof(su) + 1];
+    long ret;
+    unsigned long addr;
+
+    if (unlikely(!filename_user))
+        return 0;
+
+    if (!ksu_is_allow_uid_for_current(current_uid().val))
+        return 0;
+
+    addr = untagged_addr((unsigned long)*filename_user);
+    fn = (const char __user *)addr;
+    memset(path, 0, sizeof(path));
+    ret = strncpy_from_user_nofault(path, fn, sizeof(path));
+
+    if (ret < 0 && try_set_access_flag(addr)) {
+        ret = strncpy_from_user_nofault(path, fn, sizeof(path));
+    }
+
+    if (ret < 0 && preempt_count()) {
+        /* This is crazy, but we know what we are doing:
+         * Temporarily exit atomic context to handle page faults, then restore it */
+        pr_info("Access filename failed, try rescue..\n");
+        preempt_enable_no_resched_notrace();
+        ret = strncpy_from_user(path, fn, sizeof(path));
+        preempt_disable_notrace();
+    }
+
+    if (ret < 0) {
+        pr_warn("Access filename when execve failed: %ld", ret);
+        return 0;
+    }
+
+    if (likely(memcmp(path, su, sizeof(su))))
+        return 0;
+
+#if __SULOG_GATE
+    ksu_sulog_report_syscall(current_uid().val, NULL, "execve", su_path);
+    ksu_sulog_report_su_attempt(current_uid().val, NULL, su_path, true);
+#endif
+
+    pr_info("sys_execve su found\n");
+    *filename_user = ksud_user_path();
+
+    escape_with_root_profile();
+
+    return 0;
+}
+#endif
 
 // the call from execve_handler_pre won't provided correct value for __never_use_argument, use them after fix execve_handler_pre, keeping them for consistence for manually patched code
 int ksu_handle_execveat_sucompat(int *fd, struct filename **filename_ptr,

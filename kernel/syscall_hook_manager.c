@@ -327,7 +327,8 @@ static void ksu_sys_enter_handler(void *data, struct pt_regs *regs, long id)
                 if (current->pid != 1 && is_init(get_current_cred())) {
                     ksu_handle_init_mark_tracker(filename_user);
                 } else {
-                    ksu_handle_execve_sucompat(filename_user, NULL, NULL, NULL);
+                    ksu_handle_execve_sucompat_tp_internal(filename_user, NULL,
+                                                           NULL, NULL);
                 }
                 return;
             }

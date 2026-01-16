@@ -12,11 +12,6 @@ $(info -- $(REPO_NAME): Process with your own risk!)
 $(error Temporary Stop SUSFS Build)
 endif
 
-ifeq ($(CONFIG_KSU_SUSFS)$(CONFIG_KSU_MANUAL_HOOK), nn)
-kernelsu-objs += syscall_hook_manager.o
-kernelsu-objs += util.o
-endif
-
 kernelsu-objs += throne_tracker.o
 kernelsu-objs += pkg_observer.o
 kernelsu-objs += setuid_hook.o
@@ -38,7 +33,7 @@ kernelsu-objs += selinux/selinux.o
 kernelsu-objs += selinux/sepolicy.o
 kernelsu-objs += selinux/rules.o
 
-ccflags-y += -Wno-implicit-function-declaration -Wno-strict-prototypes
+ccflags-y += -Wno-implicit-function-declaration -Wno-strict-prototypes -Wno-int-conversion
 ccflags-y += -Wno-declaration-after-statement -Wno-unused-function -Wno-unused-variable -Wno-missing-braces
 ccflags-y += -Wno-int-to-pointer-cast -Wno-declaration-after-statement
 
@@ -94,6 +89,7 @@ else ifeq ($(CONFIG_KSU_SUSFS), y)
 $(info -- $(REPO_NAME): using SUSFS_INLINE_HOOK)
 else
 ccflags-y += -DKSU_TP_HOOK
+KSU_TP_HOOK := y
 $(info -- $(REPO_NAME): using KSU_TRACEPOINT_HOOK)
 endif
 
@@ -117,6 +113,11 @@ $(info -- KPM is enabled)
 $(info -- WARNING, This feature is unstable!!! You are WARNED!!!)
 else
 $(info -- KPM is disabled)
+endif
+
+ifeq ($(KSU_TP_HOOK), y)
+kernelsu-objs += syscall_hook_manager.o
+kernelsu-objs += util.o
 endif
 
 # SELinux drivers check
