@@ -1,30 +1,28 @@
-use anyhow::{Context, Error, Ok, Result, bail};
+#[allow(unused_imports)]
+use std::fs::{Permissions, set_permissions};
+#[cfg(unix)]
+use std::os::unix::prelude::PermissionsExt;
 use std::{
     fs::{File, OpenOptions, create_dir_all, remove_file, write},
     io::{
         ErrorKind::{AlreadyExists, NotFound},
         Write,
     },
-    path::Path,
+    path::{Path, PathBuf},
     process::Command,
+};
+
+use anyhow::{Context, Error, Ok, Result, bail};
+use rustix::{
+    process,
+    thread::{LinkNameSpaceType, move_into_link_name_space},
 };
 
 use crate::{
     android::{ksucalls, module, restorecon},
-    assets, boot_patch, defs,
-};
-#[allow(unused_imports)]
-use std::fs::{Permissions, set_permissions};
-#[cfg(unix)]
-use std::os::unix::prelude::PermissionsExt;
-
-use std::path::PathBuf;
-
-use crate::boot_patch::BootRestoreArgs;
-
-use rustix::{
-    process,
-    thread::{LinkNameSpaceType, move_into_link_name_space},
+    assets, boot_patch,
+    boot_patch::BootRestoreArgs,
+    defs,
 };
 
 #[macro_export]

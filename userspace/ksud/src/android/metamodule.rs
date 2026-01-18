@@ -4,16 +4,19 @@
 //! Metamodules are special modules that manage how regular modules are mounted
 //! and provide hooks for module installation/uninstallation.
 
-use anyhow::{Context, Result, ensure};
-use log::{info, warn};
 use std::{
     collections::HashMap,
     path::{Path, PathBuf},
     process::Command,
 };
 
-use crate::android::module::{self, ModuleType::All};
-use crate::{assets, defs};
+use anyhow::{Context, Result, ensure};
+use log::{info, warn};
+
+use crate::{
+    android::module::{self, ModuleType::All},
+    assets, defs,
+};
 
 /// Determine whether the provided module properties mark it as a metamodule
 pub fn is_metamodule(props: &HashMap<String, String>) -> bool {

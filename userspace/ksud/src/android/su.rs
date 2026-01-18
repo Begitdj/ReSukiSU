@@ -1,24 +1,27 @@
-use crate::{
-    android::utils::{self, umask},
-    defs,
+#[cfg(unix)]
+use std::os::unix::process::CommandExt;
+use std::{
+    env,
+    ffi::{CStr, CString},
+    path::PathBuf,
+    process::Command,
 };
+
 use anyhow::{Context, Ok, Result, bail};
 use getopts::Options;
 use libc::c_int;
 use log::error;
-use std::env;
-#[cfg(unix)]
-use std::os::unix::process::CommandExt;
-use std::path::PathBuf;
-use std::{
-    ffi::{CStr, CString},
-    process::Command,
-};
-
-use crate::android::ksucalls::get_wrapped_fd;
 use rustix::{
     process::getuid,
     thread::{Gid, Uid, set_thread_res_gid, set_thread_res_uid},
+};
+
+use crate::{
+    android::{
+        ksucalls::get_wrapped_fd,
+        utils::{self, umask},
+    },
+    defs,
 };
 
 pub fn grant_root(global_mnt: bool) -> Result<()> {

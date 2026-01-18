@@ -1,17 +1,20 @@
-use anyhow::{Context, Ok, Result};
-use clap::Parser;
 use std::path::PathBuf;
 
 use android_logger::Config;
+use anyhow::{Context, Ok, Result};
+use clap::Parser;
 use log::LevelFilter;
 
 #[cfg(all(target_arch = "aarch64", target_os = "android"))]
 use crate::android::susfs;
-use crate::android::{feature, profile, sepolicy, su};
-use crate::boot_patch::{BootPatchArgs, BootRestoreArgs};
 use crate::{
-    android::{debug, init_event, ksucalls, module, module_config, umount, utils},
-    apk_sign, assets, defs,
+    android::{
+        debug, feature, init_event, ksucalls, module, module_config, profile, sepolicy, su, umount,
+        utils,
+    },
+    apk_sign, assets,
+    boot_patch::{BootPatchArgs, BootRestoreArgs},
+    defs,
 };
 
 /// KernelSU userspace cli
@@ -446,8 +449,9 @@ enum UmountOp {
 
 #[cfg(all(target_arch = "aarch64", target_os = "android"))]
 mod kpm_cmd {
-    use clap::Subcommand;
     use std::path::PathBuf;
+
+    use clap::Subcommand;
 
     #[derive(Subcommand, Debug)]
     pub enum Kpm {

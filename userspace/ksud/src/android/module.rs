@@ -1,3 +1,23 @@
+#[cfg(unix)]
+use std::os::unix::{prelude::PermissionsExt, process::CommandExt};
+use std::{
+    collections::HashMap,
+    env::var as env_var,
+    fs::{File, Permissions, canonicalize, copy, remove_dir_all, rename, set_permissions},
+    io::Cursor,
+    path::{Path, PathBuf},
+    process::Command,
+    str::FromStr,
+};
+
+use anyhow::{Context, Result, anyhow, bail, ensure};
+use const_format::concatcp;
+use is_executable::is_executable;
+use java_properties::PropertiesIter;
+use log::{debug, info, warn};
+use regex_lite::Regex;
+use zip_extensions::zip_extract_file_to_memory;
+
 #[allow(clippy::wildcard_imports)]
 use crate::{
     android::{
@@ -8,33 +28,13 @@ use crate::{
     },
     assets, defs,
 };
-
-use anyhow::{Context, Result, anyhow, bail, ensure};
-use const_format::concatcp;
-use is_executable::is_executable;
-use java_properties::PropertiesIter;
-use log::{debug, info, warn};
-use regex_lite::Regex;
-
-use std::fs::{copy, rename};
-use std::{
-    collections::HashMap,
-    env::var as env_var,
-    fs::{File, Permissions, canonicalize, remove_dir_all, set_permissions},
-    io::Cursor,
-    path::{Path, PathBuf},
-    process::Command,
-    str::FromStr,
+use crate::{
+    android::{
+        module::ModuleType::{Active, All},
+        module_config,
+    },
+    defs::{MODULE_DIR, MODULE_UPDATE_DIR, UPDATE_FILE_NAME},
 };
-use zip_extensions::zip_extract_file_to_memory;
-
-use crate::android::{
-    module::ModuleType::{Active, All},
-    module_config,
-};
-use crate::defs::{MODULE_DIR, MODULE_UPDATE_DIR, UPDATE_FILE_NAME};
-#[cfg(unix)]
-use std::os::unix::{prelude::PermissionsExt, process::CommandExt};
 
 const INSTALLER_CONTENT: &str = include_str!("./installer.sh");
 const INSTALL_MODULE_SCRIPT: &str = concatcp!(
