@@ -156,8 +156,6 @@
     <string name="home_android_version">Androidversion</string>
     <string name="home_device_model">Geräteausführung</string>
     <string name="su_not_allowed">Superuser %s zu erlauben ist nicht erlaubt</string>
-    <string name="settings_disable_su">Su Kompatibilität deaktivieren</string>
-    <string name="settings_disable_su_summary">Deaktivieren Sie temporär alle Anwendungen, die root-Privilegien über den Befehl &lt;unk&gt; su zu erhalten (bestehende root-Prozesse werden nicht beeinflusst).</string>
     <string name="module_install_multiple_confirm_with_names">Möchten Sie die folgenden %1$d Module installieren? \n\n\n%2$s</string>
     <string name="more_settings">Weitere Einstellungen</string>
     <string name="selinux">SELinux</string>
@@ -333,20 +331,6 @@
     <string name="menu_options">Menu Options</string>
     <string name="sort_options">Sort by</string>
     <string name="app_categories">Application Type Selection</string>
-    <!-- SuSFS Configuration -->
-    <!-- SuSFS Reset Confirmation -->
-    <!-- SuSFS Toast Messages -->
-    <!-- SuSFS Settings Item -->
-    <!-- 开机自启动相关 -->
-    <!-- SuSFS Tab Titles -->
-    <!-- SuSFS Dialog Actions -->
-    <!-- SuSFS Path Management -->
-    <!-- SuSFS Umount Mode -->
-    <!-- SuSFS Run Umount -->
-    <!-- SuSFS Reset Categories -->
-    <!-- SuSFS Path Settings -->
-    <!-- SuSFS Enabled Features -->
-    <!-- Feature Labels -->
-    <!-- 可切换状态 -->
-    <!-- Settings related strings -->
+    <string name="settings_sucompat">Su-Binärdatei umleiten</string>
+    <string name="settings_sucompat_summary">Ermöglicht Anwendungen mit Superuser-Berechtigung im App-Profil, eine Superuser-Shell durch Ausführung von /system/bin/su zu erhalten; wirksam nur für neue Prozesse.</string>
 </resources>

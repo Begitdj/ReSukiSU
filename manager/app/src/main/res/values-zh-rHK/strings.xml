@@ -155,8 +155,10 @@
     <string name="home_android_version">Android 版本</string>
     <string name="home_device_model">裝置</string>
     <string name="su_not_allowed">唔允許授予 %s 超級用戶權限</string>
-    <string name="settings_disable_su">禁用 su 兼容性</string>
-    <string name="settings_disable_su_summary">臨時禁止任何應用程式通過 su 命令獲取 Root 權限（現有嘅 Root 進程唔受影響）</string>
+    <string name="settings_sucompat">傳統 su 命令支援</string>
+    <string name="settings_sucompat_summary">允許透過 /system/bin/su 獲取 Root 權限，僅對新行程生效。</string>
+    <string name="settings_kernel_umount">核心處理解除掛載模組</string>
+    <string name="settings_kernel_umount_summary">在核心為需要的應用程式解除掛載模組</string>
     <string name="module_install_multiple_confirm_with_names">確定要安裝以下 %1$d 個模組嗎？\n\n%2$s</string>
     <string name="more_settings">更多配置</string>
     <string name="selinux">SELinux</string>

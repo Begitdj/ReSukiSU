@@ -50,6 +50,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Expand
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -698,7 +700,7 @@ fun SettingsDropdownWidget(
 
     val itemsNotEmpty = items.isNotEmpty()
 
-    SettingsJumpPageWidget(
+    SettingsBaseWidget(
         icon = icon,
         iconPlaceholder = iconPlaceholder,
         title = title,
@@ -725,7 +727,7 @@ fun SettingsDropdownWidget(
                 fontWeight = MaterialTheme.typography.bodyMediumEmphasized.fontWeight,
             )
         }
-    )
+    ) {}
 
     if (showDialog && itemsNotEmpty) {
         AlertDialog(

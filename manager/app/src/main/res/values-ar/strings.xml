@@ -156,8 +156,6 @@
     <string name="home_android_version">‏إصدار Android</string>
     <string name="home_device_model">نوع الجهاز</string>
     <string name="su_not_allowed">لا يسمح بمنح المستخدم المتميز ل %s</string>
-    <string name="settings_disable_su">تعطيل توافق su</string>
-    <string name="settings_disable_su_summary">تعطيل أي تطبيقات مؤقتًا من الحصول على امتيازات الجذر عن طريق الأمر &lt;unk&gt; su (لن تتأثر عمليات الجذر الحالية).</string>
     <string name="module_install_multiple_confirm_with_names">هل أنت متأكد من أنك تريد تثبيت وحدات %1$d التالية؟ \n\n%2$s</string>
     <string name="more_settings">المزيد من الإعدادات</string>
     <string name="selinux">SELinux</string>
@@ -333,20 +331,8 @@
     <string name="menu_options">Menu Options</string>
     <string name="sort_options">Sort by</string>
     <string name="app_categories">Application Type Selection</string>
-    <!-- SuSFS Configuration -->
-    <!-- SuSFS Reset Confirmation -->
-    <!-- SuSFS Toast Messages -->
-    <!-- SuSFS Settings Item -->
-    <!-- 开机自启动相关 -->
-    <!-- SuSFS Tab Titles -->
-    <!-- SuSFS Dialog Actions -->
-    <!-- SuSFS Path Management -->
-    <!-- SuSFS Umount Mode -->
-    <!-- SuSFS Run Umount -->
-    <!-- SuSFS Reset Categories -->
-    <!-- SuSFS Path Settings -->
-    <!-- SuSFS Enabled Features -->
-    <!-- Feature Labels -->
-    <!-- 可切换状态 -->
-    <!-- Settings related strings -->
+    <string name="settings_sucompat">إعادة توجيه ثنائي su</string>
+    <string name="settings_sucompat_summary">يسمح للتطبيقات التي تم منحها صلاحيات Superuser في ملف تعريف التطبيق بالحصول على shell superuser من خلال تنفيذ /system/bin/su؛ فعال فقط للعمليات الجديدة.</string>
+    <string name="settings_kernel_umount">إلغاء تحميل النواة</string>
+    <string name="settings_kernel_umount_summary">سلوك إلغاء تحميل مستوى النواة الذي يسيطر عليه KernelSU</string>
 </resources>

@@ -157,8 +157,6 @@ Lanjutkan?</string>
     <string name="home_android_version">Versi Android</string>
     <string name="home_device_model">Model Perangkat</string>
     <string name="su_not_allowed">Pemberian hak superuser untuk %s tidak diizinkan</string>
-    <string name="settings_disable_su">Nonaktifkan Kompatibilitas su</string>
-    <string name="settings_disable_su_summary">Sementara mencegah aplikasi mana pun mendapatkan hak root melalui perintah su (proses root yang ada tidak akan terpengaruh).</string>
     <string name="module_install_multiple_confirm_with_names">Apakah Anda yakin ingin memasang %1$d modul berikut?
 %2$s</string>
     <string name="more_settings">Pengaturan Lainnya</string>

@@ -38,6 +38,10 @@
     <string name="module_uninstall_failed">Не вдалося видалити: %s</string>
     <string name="module_version">Версія</string>
     <string name="module_author">Автор</string>
+    <string name="settings_sucompat">Перенаправлення бінарного файлу su</string>
+    <string name="settings_sucompat_summary">Дозволяє програмам з правами Суперкористувача в профілі програми отримати оболонку суперкористувача шляхом виконання /system/bin/su; діє тільки для нових процесів.</string>
+    <string name="settings_kernel_umount">Розмонтування ядра</string>
+    <string name="settings_kernel_umount_summary">Поведінка розмонтування на рівні ядра, контрольована KernelSU</string>
     <string name="refresh">Оновити</string>
     <string name="show_system_apps">Показати системні додатки</string>
     <string name="hide_system_apps">Сховати системні додатки</string>
@@ -155,8 +159,6 @@
     <string name="home_android_version">Версія Android</string>
     <string name="home_device_model">Модель пристрою</string>
     <string name="su_not_allowed">Надання прав суперкористувача для %s заборонено</string>
-    <string name="settings_disable_su">Вимкнути сумісність з su</string>
-    <string name="settings_disable_su_summary">Тимчасово заборонити будь-яким додаткам отримувати root-права через команду su (існуючі root-процеси не будуть зачеплені).</string>
     <string name="module_install_multiple_confirm_with_names">Ви впевнені, що хочете встановити наступні %1$d модулі? \n\n%2$s</string>
     <string name="more_settings">Більше налаштувань</string>
     <string name="selinux">SELinux</string>

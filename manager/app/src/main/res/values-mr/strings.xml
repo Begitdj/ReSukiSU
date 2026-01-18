@@ -154,8 +154,6 @@
     <string name="home_android_version">Android version</string>
     <string name="home_device_model">Device model</string>
     <string name="su_not_allowed">Granting superuser to %s is not allowed</string>
-    <string name="settings_disable_su">Disable su compatibility</string>
-    <string name="settings_disable_su_summary">Temporarily disable any applications from obtaining root privileges via the ⁠su command (existing root processes will not be affected).</string>
     <string name="module_install_multiple_confirm_with_names">Sure you want to install the following %1$d modules? \n\n%2$s</string>
     <string name="more_settings">More settings</string>
     <string name="selinux">SELinux</string>
@@ -331,20 +329,8 @@
     <string name="menu_options">Menu Options</string>
     <string name="sort_options">Sort by</string>
     <string name="app_categories">Application Type Selection</string>
-    <!-- SuSFS Configuration -->
-    <!-- SuSFS Reset Confirmation -->
-    <!-- SuSFS Toast Messages -->
-    <!-- SuSFS Settings Item -->
-    <!-- 开机自启动相关 -->
-    <!-- SuSFS Tab Titles -->
-    <!-- SuSFS Dialog Actions -->
-    <!-- SuSFS Path Management -->
-    <!-- SuSFS Umount Mode -->
-    <!-- SuSFS Run Umount -->
-    <!-- SuSFS Reset Categories -->
-    <!-- SuSFS Path Settings -->
-    <!-- SuSFS Enabled Features -->
-    <!-- Feature Labels -->
-    <!-- 可切换状态 -->
-    <!-- Settings related strings -->
+    <string name="settings_sucompat">su बाइनरी पुन्हा मार्गस्थ करा</string>
+    <string name="settings_sucompat_summary">ॲप प्रोफाईलमध्ये सुपरयुझर परवानगी दिलेल्या ॲप्ससाठी /system/bin/su ला ksud वर पुनर्निर्देशित करा; फक्त नवीन प्रक्रियांसाठी प्रभावी.</string>
+    <string name="settings_kernel_umount">कर्नल अनमाउंट</string>
+    <string name="settings_kernel_umount_summary">KernelSU द्वारे नियंत्रित कर्नल-स्तरीय अनमाउंट वर्तन</string>
 </resources>

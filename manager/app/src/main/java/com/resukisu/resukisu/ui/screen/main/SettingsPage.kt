@@ -108,6 +108,7 @@ import com.resukisu.resukisu.ui.component.ksuIsValid
 import com.resukisu.resukisu.ui.component.rememberConfirmDialog
 import com.resukisu.resukisu.ui.component.rememberCustomDialog
 import com.resukisu.resukisu.ui.component.rememberLoadingDialog
+import com.resukisu.resukisu.ui.component.settings.SettingsBaseWidget
 import com.resukisu.resukisu.ui.component.settings.SettingsDropdownWidget
 import com.resukisu.resukisu.ui.component.settings.SettingsJumpPageWidget
 import com.resukisu.resukisu.ui.component.settings.SettingsSwitchWidget
@@ -208,8 +209,8 @@ fun SettingsPage(navigator: DestinationsNavigator, bottomPadding: Dp, hazeState:
             KsuIsValid {
                 val modeItems = listOf(
                     stringResource(id = R.string.settings_mode_default),
-                    stringResource(id = R.string.settings_mode_temp_enable),
-                    stringResource(id = R.string.settings_mode_always_enable),
+                    stringResource(id = R.string.settings_mode_disable_until_reboot),
+                    stringResource(id = R.string.settings_mode_disable_always),
                 )
                 SplicedColumnGroup(
                     title = stringResource(R.string.configuration),
@@ -246,11 +247,11 @@ fun SettingsPage(navigator: DestinationsNavigator, bottomPadding: Dp, hazeState:
                                 }
 
                                 "managed" -> stringResource(id = R.string.feature_status_managed_summary)
-                                else -> stringResource(id = R.string.settings_disable_su_summary)
+                                else -> stringResource(id = R.string.settings_sucompat_summary)
                             }
                             SettingsDropdownWidget(
                                 icon = Icons.Rounded.RemoveModerator,
-                                title = stringResource(id = R.string.settings_disable_su),
+                                title = stringResource(id = R.string.settings_sucompat),
                                 description = suSummary,
                                 items = modeItems,
                                 enabled = suStatus == "supported",
@@ -285,58 +286,25 @@ fun SettingsPage(navigator: DestinationsNavigator, bottomPadding: Dp, hazeState:
                         }
 
                         item {
-                            var kernelUmountMode by rememberSaveable {
-                                mutableIntStateOf(
-                                    run {
-                                        val currentEnabled = Natives.isKernelUmountEnabled()
-                                        val savedPersist = prefs.getInt("kernel_umount_mode", 0)
-                                        if (savedPersist == 2) 2 else if (!currentEnabled) 1 else 0
-                                    }
-                                )
-                            }
+                            var isKernelUmountEnabled by rememberSaveable { mutableStateOf(Natives.isKernelUmountEnabled()) }
                             val umountStatus by produceState(initialValue = "") {
                                 value = getFeatureStatus("kernel_umount")
                             }
                             val umountSummary = when (umountStatus) {
-                                "unsupported" -> {
-                                    kernelUmountMode = 0 // fix wrongly display
-                                    stringResource(id = R.string.feature_status_unsupported_summary)
-                                }
-
+                                "unsupported" -> stringResource(id = R.string.feature_status_unsupported_summary)
                                 "managed" -> stringResource(id = R.string.feature_status_managed_summary)
-                                else -> stringResource(id = R.string.settings_disable_kernel_umount_summary)
+                                else -> stringResource(id = R.string.settings_kernel_umount_summary)
                             }
-                            SettingsDropdownWidget(
+                            SettingsSwitchWidget(
                                 icon = Icons.Rounded.RemoveCircle,
-                                title = stringResource(id = R.string.settings_disable_kernel_umount),
+                                title = stringResource(id = R.string.settings_kernel_umount),
                                 description = umountSummary,
-                                items = modeItems,
                                 enabled = umountStatus == "supported",
-                                selectedIndex = kernelUmountMode,
-                                onSelectedIndexChange = { index ->
-                                    when (index) {
-                                        // Default: enable and save to persist
-                                        0 -> if (Natives.setKernelUmountEnabled(true)) {
-                                            execKsud("feature save", true)
-                                            prefs.edit { putInt("kernel_umount_mode", 0) }
-                                            kernelUmountMode = 0
-                                        }
-
-                                        // Temporarily disable: save enabled state first, then disable
-                                        1 -> if (Natives.setKernelUmountEnabled(true)) {
-                                            execKsud("feature save", true)
-                                            if (Natives.setKernelUmountEnabled(false)) {
-                                                prefs.edit { putInt("kernel_umount_mode", 0) }
-                                                kernelUmountMode = 1
-                                            }
-                                        }
-
-                                        // Permanently disable: disable and save
-                                        2 -> if (Natives.setKernelUmountEnabled(false)) {
-                                            execKsud("feature save", true)
-                                            prefs.edit { putInt("kernel_umount_mode", 2) }
-                                            kernelUmountMode = 2
-                                        }
+                                checked = isKernelUmountEnabled,
+                                onCheckedChange = { checked ->
+                                    if (Natives.setKernelUmountEnabled(checked)) {
+                                        execKsud("feature save", true)
+                                        isKernelUmountEnabled = checked
                                     }
                                 }
                             )
@@ -364,11 +332,11 @@ fun SettingsPage(navigator: DestinationsNavigator, bottomPadding: Dp, hazeState:
                                 }
 
                                 "managed" -> stringResource(id = R.string.feature_status_managed_summary)
-                                else -> stringResource(id = R.string.settings_disable_sulog_summary)
+                                else -> stringResource(id = R.string.settings_sulog_summary)
                             }
                             SettingsDropdownWidget(
                                 icon = Icons.Default.RemoveRedEye,
-                                title = stringResource(id = R.string.settings_disable_sulog),
+                                title = stringResource(id = R.string.settings_sulog),
                                 description = suLogSummary,
                                 items = modeItems,
                                 enabled = suLogStatus == "supported",
@@ -541,13 +509,13 @@ fun SettingsPage(navigator: DestinationsNavigator, bottomPadding: Dp, hazeState:
                 title = stringResource(R.string.tools),
                 content = {
                     item {
-                        SettingsJumpPageWidget(
+                        SettingsBaseWidget(
                             icon = Icons.Filled.BugReport,
                             title = stringResource(R.string.send_log),
                             onClick = {
                                 showBottomsheet = true
                             }
-                        )
+                        ) {}
                     }
 
                     if (ksuIsValid() && isSuLogEnabled) {
@@ -633,13 +601,13 @@ fun SettingsPage(navigator: DestinationsNavigator, bottomPadding: Dp, hazeState:
                 title = stringResource(R.string.about),
                 content = {
                     item {
-                        SettingsJumpPageWidget(
+                        SettingsBaseWidget(
                             icon = Icons.Filled.Info,
                             title = stringResource(R.string.about),
                             onClick = {
                                 aboutDialog.show()
                             }
-                        )
+                        ) {}
                     }
                 }
             )

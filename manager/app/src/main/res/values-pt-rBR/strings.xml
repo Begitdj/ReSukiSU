@@ -122,4 +122,8 @@
     <string name="log_saved">Registros salvos</string>
     <string name="module_sort_action_first">Ordenar (Ação primeiro)</string>
     <string name="module_sort_enabled_first">Ordenar (Ativado primeiro)</string>
+    <string name="settings_sucompat">Redirecionar binário su</string>
+    <string name="settings_sucompat_summary">Permite que aplicativos com permissão de Superusuário no Perfil do App obtenham um shell de superusuário executando /system/bin/su; efetivo apenas para novos processos.</string>
+    <string name="settings_kernel_umount">Desmontar kernel</string>
+    <string name="settings_kernel_umount_summary">Comportamento de desmontagem no nível do kernel controlado pelo KernelSU</string>
 </resources>
