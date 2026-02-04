@@ -97,7 +97,7 @@ struct AddTryUmountCmd {
 struct DynamicManage {
     operation: u32,
     size: u32,
-    hash: [u8; 65],
+    hash: [u8; 64],
 }
 
 // Mark operation constants
@@ -339,7 +339,7 @@ pub fn umount_list_del(path: &str) -> anyhow::Result<()> {
     Ok(())
 }
 
-pub fn dynamic_manager_set(size: u32, hash: [u8; 65]) -> anyhow::Result<()> {
+pub fn dynamic_manager_set(size: u32, hash: [u8; 64]) -> anyhow::Result<()> {
     let mut cmd = DynamicManage {
         operation: SUKISU_DYNAMIC_MANAGER_SET,
         size,
@@ -349,11 +349,11 @@ pub fn dynamic_manager_set(size: u32, hash: [u8; 65]) -> anyhow::Result<()> {
     Ok(())
 }
 
-pub fn dynamic_manager_get() -> anyhow::Result<(u32, [u8; 65])> {
+pub fn dynamic_manager_get() -> anyhow::Result<(u32, [u8; 64])> {
     let mut cmd = DynamicManage {
         operation: SUKISU_DYNAMIC_MANAGER_GET,
         size: 0,
-        hash: [0u8; 65],
+        hash: [0u8; 64],
     };
     ksuctl(SUKISU_IOCTL_DYNAMIC_MANAGER, &raw mut cmd)?;
     Ok((cmd.size, cmd.hash))
@@ -363,7 +363,7 @@ pub fn dynamic_manager_clear() -> anyhow::Result<()> {
     let mut cmd = DynamicManage {
         operation: SUKISU_DYNAMIC_MANAGER_CLEAR,
         size: 0,
-        hash: [0u8; 65],
+        hash: [0u8; 64],
     };
     ksuctl(SUKISU_IOCTL_DYNAMIC_MANAGER, &raw mut cmd)?;
     Ok(())

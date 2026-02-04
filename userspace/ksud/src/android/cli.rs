@@ -453,7 +453,7 @@ enum DynamicManagerOp {
         size: u32,
         /// the signature hash
         #[arg(value_parser = dynamic_manager::parse_hash)]
-        hash: [u8; 65],
+        hash: [u8; 64],
     },
     /// Clear the dynamic manager
     Clear,

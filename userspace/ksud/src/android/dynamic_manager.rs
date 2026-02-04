@@ -16,11 +16,11 @@ struct Config {
 }
 
 impl Config {
-    fn hash_bytes(&self) -> Result<[u8; 65], String> {
+    fn hash_bytes(&self) -> Result<[u8; 64], String> {
         parse_hash(&self.hash)
     }
 
-    pub fn set_hash_from_bytes(&mut self, hash: [u8; 65]) {
+    pub fn set_hash_from_bytes(&mut self, hash: [u8; 64]) {
         self.hash = String::from_utf8_lossy(&hash).to_string();
     }
 }
@@ -43,20 +43,20 @@ pub fn booted_load() -> Result<()> {
     Ok(())
 }
 
-pub fn parse_hash(s: &str) -> Result<[u8; 65], String> {
+pub fn parse_hash(s: &str) -> Result<[u8; 64], String> {
     let bytes = s.as_bytes();
 
-    if bytes.len() != 65 {
+    if bytes.len() != 64 {
         return Err("Incorrect hash".to_string());
     }
 
-    let mut hash = [0u8; 65];
+    let mut hash = [0u8; 64];
     hash.copy_from_slice(bytes);
 
     Ok(hash)
 }
 
-pub fn set(size: u32, hash: [u8; 65]) -> Result<()> {
+pub fn set(size: u32, hash: [u8; 64]) -> Result<()> {
     let mut json_raw = Config {
         size,
         hash: String::new(),
