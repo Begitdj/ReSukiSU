@@ -109,6 +109,8 @@ int ksu_handle_dynamic_manager(struct ksu_dynamic_manager_cmd *cmd)
     case DYNAMIC_MANAGER_OP_WIPE:
         dynamic_manager.is_set = 0;
         ret = 0;
+        ksu_unregister_manager_by_signature_index(
+            DYNAMIC_MANAGER_SIGNATURE_INDEX_MAGIC);
         pr_info("dynamic manager kernel settings reseted");
         break;
 
