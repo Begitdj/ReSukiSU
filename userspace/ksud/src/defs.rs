@@ -13,7 +13,6 @@ mod android {
 
     pub const KSURC_PATH: &str = concatcp!(WORKING_DIR, ".ksurc");
     pub const DAEMON_PATH: &str = concatcp!(ADB_DIR, "ksud");
-    pub const MAGISKBOOT_PATH: &str = concatcp!(BINARY_DIR, "magiskboot");
 
     pub const DAEMON_LINK_PATH: &str = concatcp!(BINARY_DIR, "ksud");
 
@@ -36,6 +35,12 @@ mod android {
     pub const METAMODULE_MOUNT_SCRIPT: &str = "metamount.sh";
     pub const METAMODULE_METAINSTALL_SCRIPT: &str = "metainstall.sh";
     pub const METAMODULE_METAUNINSTALL_SCRIPT: &str = "metauninstall.sh";
+    pub const METAMODULE_METAINSTALL_SCRIPT_LOG: &str =
+        concatcp!(LOG_DIR, "metamodule_install.log");
+    pub const METAMODULE_MOUNT_SCRIPT_LOG: &str = concatcp!(LOG_DIR, "metamodule_mount.log");
+    pub const METAMODULE_METAUNINSTALL_SCRIPT_LOG: &str =
+        concatcp!(LOG_DIR, "metamodule_metauninstall.log");
+    pub const METAMODULE_DEBUG: &str = concatcp!(WORKING_DIR, "metamodule.debug");
 
     pub const KSU_BACKUP_DIR: &str = WORKING_DIR;
     pub const KSU_BACKUP_FILE_PREFIX: &str = "ksu_backup_";

@@ -1,14 +1,12 @@
 pub mod metamodule;
 pub mod module_config;
 
-#[cfg(all(target_os = "android", target_arch = "aarch64"))]
-use std::fs;
 #[cfg(unix)]
 use std::os::unix::{prelude::PermissionsExt, process::CommandExt};
 use std::{
     collections::HashMap,
     env::var as env_var,
-    fs::{File, Permissions, canonicalize, copy, remove_dir_all, rename, set_permissions},
+    fs::{self, File, Permissions, canonicalize, copy, remove_dir_all, rename, set_permissions},
     io::Cursor,
     path::{Path, PathBuf},
     process::Command,
@@ -99,8 +97,16 @@ fn exec_install_script(module_file: &str, is_metamodule: bool) -> Result<()> {
         .envs(get_common_script_envs())
         .env("OUTFD", "1")
         .env("ZIPFILE", realpath)
-        .status()?;
-    ensure!(result.success(), "Failed to install module script");
+        .spawn()?
+        .wait_with_output()?;
+
+    let err = String::from_utf8_lossy(&result.stderr);
+
+    if fs::exists(defs::METAMODULE_DEBUG)? {
+        fs::write(defs::METAMODULE_METAINSTALL_SCRIPT_LOG, err.to_string())?;
+    }
+
+    ensure!(result.status.success(), "Failed to install module script");
     Ok(())
 }
 

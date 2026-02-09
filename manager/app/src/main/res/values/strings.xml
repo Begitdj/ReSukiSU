@@ -311,7 +311,7 @@
     <!-- Webui settings -->
     <string name="module_webui_alert">Message from Module %s</string>
     <string name="no_such_module">Module %s does not exist</string>
-    <string name="module_unavailable">Module %s is disabled, updating, or pending removal</string>
+    <string name="module_unavailable">Module %s is disabled, or pending removal</string>
     <string name="select_default_webui_engine">Default WebUI engine</string>
     <string name="select_webui_engine_description">Select global default webui engine</string>
     <string name="webui_engine_default">Follow default settings</string>
@@ -332,8 +332,7 @@
     <string name="dpi_apply_settings">Apply DPI settings</string>
     <string name="dpi_confirm_title">Confirm DPI change</string>
     <string name="dpi_confirm_message">Are you sure you want to change the application DPI from %1$d to %2$d?</string>
-    <string name="dpi_confirm_summary">Application needs to be restarted to apply the new DPI settings, does not affect the system status bar or other applications</string>
-    <string name="dpi_applied_success">DPI has been set to %1$d, effective after restarting the application</string>
+    <string name="dpi_applied_success">DPI has been set to %1$d</string>
     <!-- Language settings related strings -->
     <string name="settings_language">App Language</string>
     <string name="language_system_default">Follow System</string>
