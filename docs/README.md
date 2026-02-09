@@ -1,3 +1,11 @@
+## Fork notice
+
+This is a fork of `ReSukiSU/ReSukiSU`.
+
+Changes in this fork:
+- Replace `iterate` with `iterate_shared` for compatibility with some kernels.
+
+Maintainer: **begitdj**
 # ReSukiSU
 <img align='right' src='SukiSU-mini.svg' width='220px' alt="sukisu logo">
 
