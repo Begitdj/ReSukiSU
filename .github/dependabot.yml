@@ -12,6 +12,8 @@ updates:
     directory: userspace/ksud
     schedule:
       interval: weekly
+    ignore:
+      - dependency-name: "zip*"
     allow:
       - dependency-type: "all"
     groups:
