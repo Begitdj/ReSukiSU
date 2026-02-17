@@ -179,13 +179,6 @@ fun SettingsPage(navigator: DestinationsNavigator, bottomPadding: Dp, hazeState:
                 Natives.isKernelUmountEnabled()
             )
         }
-        var savedUmountStatus by rememberSaveable { mutableStateOf("") }
-        val umountStatus by produceState(initialValue = savedUmountStatus) {
-            value = withContext(Dispatchers.IO) {
-                savedUmountStatus = getFeatureStatus("kernel_umount")
-                return@withContext savedUmountStatus
-            }
-        }
 
         LazyColumn(
             modifier =
@@ -287,6 +280,13 @@ fun SettingsPage(navigator: DestinationsNavigator, bottomPadding: Dp, hazeState:
                             }
 
                             item {
+                                var savedUmountStatus by rememberSaveable { mutableStateOf("") }
+                                val umountStatus by produceState(initialValue = savedUmountStatus) {
+                                    value = withContext(Dispatchers.IO) {
+                                        savedUmountStatus = getFeatureStatus("kernel_umount")
+                                        return@withContext savedUmountStatus
+                                    }
+                                }
                                 val umountSummary = when (umountStatus) {
                                     "unsupported" -> stringResource(id = R.string.feature_status_unsupported_summary)
                                     "managed" -> stringResource(id = R.string.feature_status_managed_summary)
@@ -461,7 +461,7 @@ fun SettingsPage(navigator: DestinationsNavigator, bottomPadding: Dp, hazeState:
                         }
 
                         if (ksuIsValid()) {
-                            item(visible = umountStatus == "supported") {
+                            item(visible = isKernelUmountEnabled) {
                                 SettingsJumpPageWidget(
                                     icon = Icons.Filled.FolderOff,
                                     title = stringResource(R.string.umount_path_manager),
