@@ -1,0 +1,24 @@
+name: Rename iterate to iterate_shared
+
+on:
+  workflow_dispatch:
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Replace .iterate with .iterate_shared
+        run: |
+          find . -type f \( -name "*.c" -o -name "*.h" \) -print0 | xargs -0 sed -i 's/\.iterate\b/.iterate_shared/g'
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Fork: rename .iterate to .iterate_shared"
+          
