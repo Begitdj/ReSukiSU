@@ -224,6 +224,10 @@ fun MoreSettingsScreen() {
 
     val navigator = LocalNavigator.current
 
+    LaunchedEffect(Unit) {
+        scrollBehavior.state.heightOffset = scrollBehavior.state.heightOffsetLimit
+    }
+
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {

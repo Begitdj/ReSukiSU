@@ -95,6 +95,8 @@ fun AppProfileTemplateScreen() {
     val navigator = LocalNavigator.current
 
     LaunchedEffect(Unit) {
+        scrollBehavior.state.heightOffset = scrollBehavior.state.heightOffsetLimit
+
         if (viewModel.templateList.isEmpty()) {
             viewModel.fetchTemplates()
         }

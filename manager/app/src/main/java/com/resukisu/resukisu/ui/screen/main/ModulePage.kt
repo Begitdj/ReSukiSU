@@ -85,10 +85,12 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -135,7 +137,6 @@ import com.resukisu.resukisu.ui.component.WarningCard
 import com.resukisu.resukisu.ui.component.ZipFileDetector.parseModuleInfo
 import com.resukisu.resukisu.ui.component.ZipFileInfo
 import com.resukisu.resukisu.ui.component.ZipType
-import com.resukisu.resukisu.ui.component.pinnedScrollBehavior
 import com.resukisu.resukisu.ui.component.rememberConfirmDialog
 import com.resukisu.resukisu.ui.component.rememberLoadingDialog
 import com.resukisu.resukisu.ui.component.settings.SettingsBaseWidget
@@ -296,14 +297,26 @@ fun ModulePage(bottomPadding: Dp, hazeState: HazeState?) {
     val hasMagisk = hasMagisk()
     val hideInstallButton = isSafeMode || hasMagisk
 
-    val scrollBehavior = pinnedScrollBehavior()
+    val topAppBarState = rememberTopAppBarState()
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topAppBarState)
 
     Scaffold(
         topBar = {
             SearchAppBar(
+                title = stringResource(R.string.module),
                 searchText = viewModel.search,
                 onSearchTextChange = { viewModel.search = it },
                 dropdownContent = {
+                    IconButton(
+                        onClick = { showBottomSheet = true },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.MoreVert,
+                            contentDescription = stringResource(id = R.string.settings),
+                        )
+                    }
+                },
+                navigationContent = {
                     IconButton(
                         onClick = {
                             navigator.push(Route.ModuleRepo)
@@ -312,14 +325,6 @@ fun ModulePage(bottomPadding: Dp, hazeState: HazeState?) {
                         Icon(
                             imageVector = Icons.Outlined.Cloud,
                             contentDescription = stringResource(id = R.string.module_repo),
-                        )
-                    }
-                    IconButton(
-                        onClick = { showBottomSheet = true },
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.MoreVert,
-                            contentDescription = stringResource(id = R.string.settings),
                         )
                     }
                 },
@@ -966,21 +971,25 @@ private fun ModuleList(
         LazyColumn(
             state = listState,
             modifier = modifier,
-            verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = remember {
                 PaddingValues(
                     start = 16.dp,
-                    top = topPadding + 5.dp,
+                    top = 0.dp,
                     end = 16.dp,
-                    bottom = bottomPadding + 72.dp + 5.dp + 5.dp // FAB + bottom padding of FAB
+                    bottom = 72.dp + 5.dp + 5.dp // FAB + bottom padding of FAB
                 )
             },
         ) {
+            item {
+                Spacer(modifier = Modifier.height(topPadding))
+            }
+
             if (metaModuleWarningText != null) {
                 item(
                     key = "warning"
                 ) {
                     MetaModuleWarningCard(metaModuleWarningText!!)
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
             }
 
@@ -1044,7 +1053,11 @@ private fun ModuleList(
                     }
                 )
 
-                Spacer(Modifier.height(1.dp))
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(bottomPadding))
             }
         }
 

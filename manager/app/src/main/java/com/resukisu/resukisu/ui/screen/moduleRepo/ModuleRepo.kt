@@ -56,10 +56,12 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -92,7 +94,6 @@ import com.resukisu.resukisu.ui.component.ConfirmDialogHandle
 import com.resukisu.resukisu.ui.component.ConfirmResult
 import com.resukisu.resukisu.ui.component.DialogHandle
 import com.resukisu.resukisu.ui.component.SearchAppBar
-import com.resukisu.resukisu.ui.component.pinnedScrollBehavior
 import com.resukisu.resukisu.ui.component.rememberConfirmDialog
 import com.resukisu.resukisu.ui.component.rememberCustomDialog
 import com.resukisu.resukisu.ui.navigation.LocalNavigator
@@ -129,7 +130,8 @@ fun ModuleRepoScreen() {
     val prefs = context.getSharedPreferences("settings", MODE_PRIVATE)
     val viewModel = viewModel<ModuleRepoViewModel>()
     val snackBarHost = LocalSnackbarHost.current
-    val scrollBehavior = pinnedScrollBehavior()
+    val topAppBarState = rememberTopAppBarState()
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topAppBarState)
     val currentModuleForChooseDialog = remember { mutableStateOf<RepoModule?>(null) }
     val chooseDialog = rememberCustomDialog({ dismiss ->
         ChooseDialogContent(currentModuleForChooseDialog, viewModel, dismiss)
@@ -143,6 +145,8 @@ fun ModuleRepoScreen() {
     val pullRefreshState = rememberPullToRefreshState()
 
     LaunchedEffect(Unit) {
+        scrollBehavior.state.heightOffset = scrollBehavior.state.heightOffsetLimit
+
         viewModel.sortStargazerCountFirst = prefs.getBoolean("module_repo_sort_star_first", false)
     }
 
@@ -155,6 +159,7 @@ fun ModuleRepoScreen() {
                 modifier = if (isLoading) Modifier.background(MaterialTheme.colorScheme.surfaceContainer.copy(
                     alpha = 0.8f
                 )) else Modifier,
+                title = stringResource(R.string.module_repo),
                 searchText = viewModel.search,
                 onSearchTextChange = { viewModel.search = it },
                 dropdownContent = {
@@ -257,19 +262,19 @@ fun ModuleRepoScreen() {
                 LazyColumn(
                     state = rememberLazyListState(),
                     modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
                     contentPadding = remember {
                         PaddingValues(
                             start = 16.dp,
-                            top = 16.dp,
+                            top = 0.dp,
                             end = 16.dp,
-                            bottom = 16.dp + 56.dp + 16.dp + 48.dp + 6.dp /* Scaffold Fab Spacing + Fab container height + SnackBar height */
+                            bottom = 0.dp
                         )
                     }
                 ) {
                     item {
                         Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
                     }
+
                     items(viewModel.modules) { module ->
                         OnlineModuleItem(
                             module,
@@ -278,6 +283,7 @@ fun ModuleRepoScreen() {
                             chooseDialog,
                             currentModuleForChooseDialog
                         )
+                        Spacer(modifier = Modifier.height(16.dp))
                     }
                     item {
                         Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding()))

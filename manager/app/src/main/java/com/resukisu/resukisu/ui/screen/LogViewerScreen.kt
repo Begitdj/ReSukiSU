@@ -51,6 +51,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -73,7 +75,6 @@ import androidx.core.content.edit
 import com.resukisu.resukisu.R
 import com.resukisu.resukisu.ui.component.ConfirmResult
 import com.resukisu.resukisu.ui.component.SearchAppBar
-import com.resukisu.resukisu.ui.component.pinnedScrollBehavior
 import com.resukisu.resukisu.ui.component.rememberConfirmDialog
 import com.resukisu.resukisu.ui.component.rememberLoadingDialog
 import com.resukisu.resukisu.ui.navigation.LocalNavigator
@@ -156,7 +157,8 @@ private fun loadExcludedSubTypes(context: Context): Set<LogExclType> {
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun LogViewerScreen() {
-    val scrollBehavior = pinnedScrollBehavior()
+    val topAppBarState = rememberTopAppBarState()
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topAppBarState)
     val snackBarHost = LocalSnackbarHost.current
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -179,6 +181,10 @@ fun LogViewerScreen() {
 
     LaunchedEffect(excludedSubTypes) {
         saveExcludedSubTypes(context, excludedSubTypes)
+    }
+
+    LaunchedEffect(Unit) {
+        scrollBehavior.state.heightOffset = scrollBehavior.state.heightOffsetLimit
     }
 
     val filteredEntries = remember(
@@ -273,6 +279,7 @@ fun LogViewerScreen() {
                 SearchAppBar(
                     scrollBehavior = scrollBehavior,
                     onBackClick = { navigator.pop() },
+                    title = stringResource(R.string.log_viewer_title),
                     searchText = searchQuery,
                     onSearchTextChange = { searchQuery = it },
                     searchBarPlaceHolderText = stringResource(R.string.log_viewer_search_placeholder),

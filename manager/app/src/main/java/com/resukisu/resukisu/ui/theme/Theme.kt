@@ -7,10 +7,6 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -284,7 +280,7 @@ fun KernelSUTheme(
     ) {
         MonetColorsProvider.UpdateCss()
         Box(modifier = Modifier.fillMaxSize()) {
-            BackgroundLayer(darkTheme)
+            BackgroundLayer()
             content()
         }
     }
@@ -329,7 +325,7 @@ private fun ThemeInitializer(context: Context, systemIsDark: Boolean) {
 }
 
 @Composable
-private fun BackgroundLayer(darkTheme: Boolean) {
+private fun BackgroundLayer() {
     val backgroundUri = rememberSaveable { mutableStateOf(ThemeConfig.customBackgroundUri) }
 
     LaunchedEffect(ThemeConfig.customBackgroundUri) {
@@ -351,14 +347,14 @@ private fun BackgroundLayer(darkTheme: Boolean) {
 
     // 自定义背景
     backgroundUri.value?.let { uri ->
-        CustomBackgroundLayer(uri = uri, darkTheme = darkTheme)
+        CustomBackgroundLayer(uri = uri)
     }
 }
 
 var backgroundImagePainter: AsyncImagePainter? = null
 
 @Composable
-private fun CustomBackgroundLayer(uri: Uri, darkTheme: Boolean) {
+private fun CustomBackgroundLayer(uri: Uri) {
     backgroundImagePainter = rememberAsyncImagePainter(
         model = uri,
         onError = { error ->
@@ -372,16 +368,10 @@ private fun CustomBackgroundLayer(uri: Uri, darkTheme: Boolean) {
         }
     )
 
-    val transition = updateTransition(
-        targetState = ThemeConfig.backgroundImageLoaded,
-        label = "backgroundTransition"
-    )
-
     Box(
         modifier = Modifier
             .fillMaxSize()
             .zIndex(-1f)
-//            .alpha(alpha)
     ) {
         backgroundImagePainter?.let { painter ->
             val surfaceContainer = MaterialTheme.colorScheme.surfaceContainer
@@ -393,11 +383,6 @@ private fun CustomBackgroundLayer(uri: Uri, darkTheme: Boolean) {
                         painter = painter,
                         contentScale = ContentScale.Crop,
                     )
-//                    .graphicsLayer {
-//                        this.alpha =
-//                            (painter.state as? AsyncImagePainter.State.Success)?.let { 1f }
-//                                ?: 0f
-//                    }
                     .drawWithContent {
                         drawContent()
                         drawRect(color = surfaceContainer.copy(alpha = ThemeConfig.backgroundDim))
