@@ -1,7 +1,9 @@
 use android_logger::Config;
 use anyhow::{Context, Ok, Result};
 use clap::Parser;
-use log::LevelFilter;
+use std::path::PathBuf;
+
+use log::{LevelFilter, error, info};
 
 #[cfg(all(target_arch = "aarch64", target_os = "android"))]
 use crate::android::susfs;
@@ -40,6 +42,17 @@ enum Commands {
 
     /// Trigger `boot-complete` event
     BootCompleted,
+
+    /// Load kernelsu.ko and execute late-load stage scripts
+    LateLoad {
+        /// Use adb root to execute late-load for jailbreaking by Magica
+        #[arg(long, default_missing_value = "5555", num_args = 0..=1)]
+        magica: Option<u16>,
+
+        /// Restore adb properties after magica late-load
+        #[arg(long)]
+        post_magica: bool,
+    },
 
     #[cfg(all(target_arch = "aarch64", target_os = "android"))]
     /// Manage susfs component
@@ -106,6 +119,13 @@ enum Commands {
     Kernel {
         #[command(subcommand)]
         command: Kernel,
+    },
+
+    /// Resetprop - Magisk-compatible system property tool
+    Resetprop {
+        /// Arguments passed to resetprop
+        #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
+        args: Vec<String>,
     },
 }
 
@@ -182,6 +202,14 @@ enum Debug {
 
     /// For testing
     Test,
+
+    /// Extract an embedded binary to a specified path
+    ExtractBinary {
+        /// binary name (e.g. busybox, resetprop, bootctl)
+        name: String,
+        /// destination file path
+        path: PathBuf,
+    },
 
     /// Process mark management
     Mark {
@@ -511,6 +539,11 @@ pub fn run() -> Result<()> {
         return su::root_shell();
     }
 
+    if arg0.ends_with("resetprop") {
+        let all_args: Vec<String> = std::env::args().collect();
+        crate::android::resetprop::resetprop_main(&all_args);
+    }
+
     let cli = Args::parse();
 
     log::info!("command: {:?}", cli.command);
@@ -642,6 +675,25 @@ pub fn run() -> Result<()> {
             Sepolicy::Apply { file } => sepolicy::apply_file(file),
             Sepolicy::Check { sepolicy } => sepolicy::check_rule(&sepolicy),
         },
+        Commands::LateLoad {
+            magica,
+            post_magica,
+        } => {
+            if let Some(port) = magica {
+                return crate::android::magica::run(port).map_err(|e| {
+                    error!("Error running magica: {e}");
+                    e
+                });
+            }
+            let result = crate::android::late_load::run();
+            if post_magica {
+                info!("Restoring adb properties (post-magica cleanup)...");
+                if let Err(e) = crate::android::magica::disable_adb_root() {
+                    error!("disable adb root failed: {e}");
+                }
+            }
+            result
+        }
         Commands::Services => {
             init_event::on_services();
             Ok(())
@@ -680,6 +732,10 @@ pub fn run() -> Result<()> {
             }
             Debug::Su { global_mnt } => su::grant_root(global_mnt),
             Debug::Test => assets::ensure_binaries(false),
+            Debug::ExtractBinary { name, path } => {
+                let data = assets::get_asset(&name)?;
+                utils::ensure_binary(&path, data.as_ref().as_ref(), false)
+            }
             Debug::Mark { command } => match command {
                 MarkCommand::Get { pid } => debug::mark_get(pid),
                 MarkCommand::Mark { pid } => debug::mark_set(pid),
@@ -731,6 +787,12 @@ pub fn run() -> Result<()> {
             }
         },
         Commands::BootRestore(boot_restore) => crate::boot_patch::restore(boot_restore),
+        Commands::Resetprop { args } => {
+            let mut full_args = vec!["resetprop".to_string()];
+            full_args.extend(args);
+            crate::android::resetprop::resetprop_main(&full_args)
+        }
+
         Commands::Kernel { command } => match command {
             Kernel::NukeExt4Sysfs { mnt } => ksucalls::nuke_ext4_sysfs(&mnt),
             Kernel::Umount { command } => match command {

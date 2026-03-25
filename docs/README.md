@@ -1,6 +1,6 @@
 # Stupid fork
 # ReSukiSU
-<img align='right' src='SukiSU-mini.svg' width='220px' alt="sukisu logo">
+<img align='right' src='ReSukiSU_blue.svg' width='220px' alt="ReSukiSU Icon">
 
 
 **English** | [简体中文](./zh/README.md)

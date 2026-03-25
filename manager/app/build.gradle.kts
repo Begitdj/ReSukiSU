@@ -5,9 +5,8 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.lsplugin.apksign)
+    alias(libs.plugins.aboutLibraries)
     id("kotlin-parcelize")
-
-
 }
 
 val androidCompileSdkVersion: Int by rootProject.extra
@@ -33,6 +32,9 @@ val baseCFlags = listOf(
     "-Wno-builtin-macro-redefined", "-Wno-unused-value", "-D__FILE__=__FILE_NAME__"
 )
 val baseCppFlags = baseCFlags + "-fno-rtti"
+
+val isReleaseTask =
+    project.gradle.startParameter.taskNames.any { it.contains("Release", ignoreCase = true) }
 
 android {
     namespace = "com.resukisu.resukisu"
@@ -134,6 +136,15 @@ android {
         }
     }
 
+    splits {
+        abi {
+            isEnable = isReleaseTask
+            reset()
+            include("arm64-v8a", "x86_64", "armeabi-v7a")
+            isUniversalApk = true
+        }
+    }
+
     lint {
         abortOnError = true
         checkReleaseBuilds = false
@@ -153,6 +164,15 @@ base {
 
 configurations.all {
     exclude(group = "androidx.navigationevent", module = "navigationevent-compose")
+}
+
+aboutLibraries {
+    library {
+        // Enable the duplication mode, allows to merge, or link dependencies which relate
+        duplicationMode = com.mikepenz.aboutlibraries.plugin.DuplicateMode.MERGE
+        // Configure the duplication rule, to match "duplicates" with
+        duplicationRule = com.mikepenz.aboutlibraries.plugin.DuplicateRule.SIMPLE
+    }
 }
 
 dependencies {
@@ -182,6 +202,9 @@ dependencies {
     implementation(libs.androidx.navigationevent) {
         exclude(group = "androidx.navigation", module = "navigationevent-compose")
     }
+
+    implementation(libs.aboutlibraries.core)
+    implementation(libs.aboutlibraries.compose.m3)
 
     implementation(libs.com.github.topjohnwu.libsu.core)
     implementation(libs.com.github.topjohnwu.libsu.service)
